@@ -1,0 +1,23 @@
+<?php
+#python sqlmap.py -u "url a codigo vulnerable/?id=5000" --level=5 --risk=3 --dbs
+#python sqlmap.py -u "url a codigo vulnerable/?id=5000" --level=1 --risk=1 --technique=BEU --threads=5 --dbs
+
+#ALERTA NO DESCOMENTAR. ESTO SOLO ES PARA PRUEBAS DE SEGURIDAD Y ALCANCE. 
+error_reporting(E_ALL);
+require_once('config/config.inc.php');
+require_once('config/defines.bx.php');
+
+// Obtener el parámetro 'id' desde la URL sin validarlo (vulnerable)
+$id = $_GET['id'];
+
+// Consulta SQL vulnerable (concatenación directa de parámetros)
+$sqlent = "SELECT * FROM ps_customer WHERE id_customer = " . $id;
+
+if ($resultsent = Db::getInstance()->ExecuteS($sqlent)) {
+    foreach ($resultsent as $row) {
+        echo "ID: " . $row['id_customer'] . " - Nombre: " . $row['firstname'] . " " . $row['lastname'] . "<br>";
+    }
+} else {
+    echo "No se encontraron resultados.";
+}
+?>
